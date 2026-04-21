@@ -17,6 +17,7 @@ from dbt.adapters.databricks.constraints import TypedConstraint, process_constra
 from dbt.adapters.databricks.utils import remove_undefined
 
 KEY_TABLE_PROVIDER = "Provider"
+MAX_CHARACTERS_IN_IDENTIFIER = 255
 
 
 @dataclass
@@ -84,6 +85,19 @@ class DatabricksRelation(BaseRelation):
     )
     databricks_table_type: Optional[DatabricksTableType] = None
     temporary: Optional[bool] = False
+
+    @classmethod
+    def relation_max_name_length(cls) -> int:
+        return MAX_CHARACTERS_IN_IDENTIFIER
+
+    def __post_init__(self) -> None:
+        if self.identifier and self.type:
+            if len(self.identifier) > MAX_CHARACTERS_IN_IDENTIFIER:
+                raise DbtRuntimeError(
+                    f"Relation name '{self.identifier}' is longer than "
+                    f"{MAX_CHARACTERS_IN_IDENTIFIER} characters. "
+                    "Use a shorter test name or configure a custom alias."
+                )
 
     @classmethod
     def __pre_deserialize__(cls, data: dict[Any, Any]) -> dict[Any, Any]:
