@@ -135,6 +135,43 @@ class DatabricksColumn(SparkColumn):
             # Handle primitive types and any other types
             return str(type_name)
 
+    def is_string(self) -> bool:
+        return self.dtype.lower() in {
+            "string",
+            "varchar",
+            "char",
+            "text",
+            "character varying",
+            "character",
+            "nchar",
+            "nvarchar",
+        }
+
+    def is_integer(self) -> bool:
+        return self.dtype.lower() in {"tinyint", "smallint", "int", "integer", "bigint", "long"}
+
+    def is_float(self) -> bool:
+        return self.dtype.lower() in {"float", "double", "real"}
+
+    def is_number(self) -> bool:
+        lowered = self.dtype.lower()
+        return lowered in {
+            "tinyint",
+            "smallint",
+            "int",
+            "integer",
+            "bigint",
+            "long",
+            "float",
+            "double",
+            "decimal",
+            "numeric",
+            "real",
+        } or lowered.startswith("decimal(")
+
+    def is_numeric(self) -> bool:
+        return self.is_number()
+
     @property
     def data_type(self) -> str:
         return self.translate_type(self.dtype)

@@ -4,6 +4,7 @@
 
 - Fix column order mismatch in microbatch and replace_where incremental strategies by using INSERT BY NAME syntax ([#1338](https://github.com/databricks/dbt-databricks/issues/1338))
 - Validate relation identifier length at creation time and raise a clear error when it exceeds Databricks' 255-character limit, preventing confusing runtime failures when `store_failures: true` generates long table names ([#1309](https://github.com/databricks/dbt-databricks/issues/1309))
+- Fix `is_string()`, `is_number()`, `is_float()`, `is_integer()`, and `is_numeric()` type classification methods returning `False` for Databricks/Spark column types by overriding them in `DatabricksColumn` with the correct Spark type names ([#1380](https://github.com/databricks/dbt-databricks/issues/1380))
 
 ## dbt-databricks 1.11.6 (Mar 10, 2026)
 
